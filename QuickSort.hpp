@@ -36,11 +36,7 @@ public:
         if (start >= end){
             return;
         }
-        //T base = Average(array,end-start+1);
-        //T base = MediumSeeker(array,(end-start+1));
-        //T base = (MaxMin(seq,end-start+1,cmp)[0]+ MaxMin(seq,end-start+1,cmp)[1])*0.5;//за:удобно против: не для всех Т есть деление на интовую 2. Второй вариант выбирать посередине, если совпало с экстремумом, то брать конец или начало
-        //T Max = MaxMin(seq,end-start+1,cmp)[0];
-        //std::cout<<base<<std::endl;
+
         T base = seq->Get((start+end)/2);
         if (cmp(base,MaxMin(seq,end-start+1,cmp)[0])==0){
             base = seq->Get(end);

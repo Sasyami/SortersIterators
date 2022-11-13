@@ -3,4 +3,4 @@ project(LabWork)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(untitled main.cpp DynamicArray.hpp Errors.hpp LinkedList.hpp Smiles.hpp QSort.hpp QuickSort.hpp MergeSort.hpp Zoo.hpp ArraySequence.hpp IndexOutOfRange.hpp Sequence.hpp LinkedListSequence.hpp QuickListSort.hpp)
+add_executable(untitled main.cpp DynamicArray.hpp Errors.hpp LinkedList.hpp Smiles.hpp QuickSort.hpp MergeSort.hpp Zoo.hpp ArraySequence.hpp IndexOutOfRange.hpp Sequence.hpp LinkedListSequence.hpp QuickListSort.hpp ISorter.hpp)

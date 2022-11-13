@@ -5,8 +5,79 @@ template <class T> class DynamicArray{
 private:
     T* array;
     size_t length;
-
 public:
+    class ArrayIterator{//random access iterator
+    private:
+        T* value;
+    public:
+        int curIndex;
+        size_t maxIndex;
+    public:
+        ArrayIterator(T* start, size_t max_index,int cur_index = 0){
+            if (max_index<cur_index||cur_index<0){
+                value = nullptr;
+            }else {
+                value = start;
+            }
+            curIndex = cur_index;
+            maxIndex = max_index;
+        }
+        T& operator *(){
+            return *value;
+        }
+        ArrayIterator& operator ++ (){
+            value++;
+            curIndex++;
+            if (curIndex>maxIndex){
+                value = nullptr;
+            }
+            return *this;
+        }
+        bool operator < (const ArrayIterator& iterator){
+            if (value<iterator.value){
+                return true;
+            }
+            return false;
+        }
+        bool operator > (const ArrayIterator& iterator){
+            if (value>iterator.value){
+                return true;
+            }
+            return false;
+        }
+        bool operator <= (const ArrayIterator& iterator){
+            if (value<=iterator.value){
+                return true;
+            }
+            return false;
+        }
+        bool operator >= (const ArrayIterator& iterator){
+            if (value<iterator.value){
+                return true;
+            }
+            return false;
+        }
+        ArrayIterator& operator + (size_t number){
+            auto* new_iterator = new ArrayIterator(value,maxIndex,curIndex+number);
+            return *new_iterator;
+
+        }
+        ArrayIterator& operator -- (){
+            value--;
+            curIndex--;
+            if (curIndex<0||curIndex>maxIndex){
+                value = nullptr;
+            }
+            return *this;
+        }
+        ArrayIterator& operator - (size_t number){
+            auto* new_iterator = new ArrayIterator(value,maxIndex,curIndex-number);
+            return *new_iterator;
+        }
+
+    };
+public:
+
     DynamicArray(T* items,size_t count){
         int i;
 
