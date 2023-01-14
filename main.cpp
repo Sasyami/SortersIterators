@@ -6,8 +6,12 @@
 #include "Zoo.hpp"
 #include "LinkedListSequence.hpp"
 #include "QuickListSort.hpp"
-
-int cmprtr(int i1,int i2){
+#include "ISorter.hpp"
+#include "ItSorter.hpp"
+#include <time.h>
+#include "tests.hpp"
+#include <cstdlib>
+int cmprtr(int& i1,int& i2){
     return i1-i2;
 }
 int WeightCmp(Animal* a1, Animal* a2){
@@ -30,23 +34,50 @@ void KangorooNames(ArraySequence<Animal*> *seq){
     }
 }
 int main() {
-    int massive[] ={-1,1,1,1,2,1,1,1,1,1};
-    auto* Aseq = new ArraySequence<int>(massive,10);
-    auto* LLseq = new LinkedListSequence<int>(massive,9);
-    //LLseq->Delete(2);
-    //LLseq->InsertAt(10,9);
+    int massive[] ={6,4,2,3,5,0,1,1,1,9};
+    auto* Aseq = new ArraySequence<int>(massive,6);
+    auto* LLseq = new LinkedListSequence<int>(massive,6);
+    /*LLseq->Delete(2);
+    LLseq->InsertAt(10,9);*/
     QuickListSorter<int> ListSorter;
-    QuickSort<int> Sorter;
+    ISorter<int> Sorter;
     MergeSort<int> MergeSorter;
-    ListSorter.Sort(LLseq,cmprtr);
+    ItSorter<int,cmprtr, typeof(LLseq->begin())> ItSorter;
+    /*DynamicArray<int>::ArrayIterator new_it = Aseq->beginAS();
+    //ListSorter.Sort(LLseq,cmprtr);
     //MergeSorter.Sort(Aseq,0,9,cmprtr);
-    //Sorter.Sort(Aseq,0,9, cmprtr);
+    //Sorter.qsort(Aseq, cmprtr);
     //auto* DA = new DynamicArray<int>(massive,10);
-    for (int i = 0;i<LLseq->GetLength();i++){
-        std::cout<<LLseq->Get(i)<<" ";
-    }
-    std::cout<<"\n";
+    //DynamicArray<int>::ArrayIterator iterator = Aseq->begin();
+    //std::cout<<*(--(Aseq->rend()))<<std::endl;*/
 
+    ItSorter.bubblesort(LLseq->begin(),--LLseq->end());
+
+    //std::cout<<(stop-start)<<"\n"<<std::endl;
+
+    for (int & i : *LLseq){
+
+        std::cout<<i<<"\n";
+
+    }
+    /*auto* mass = new int[1000];
+    srand(NULL);
+    for (int i = 0;i<1000;i++){
+        mass[i] = rand()%1000;
+    }
+    const std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+    qsort(mass,1000,4,cmprtrTest);
+    const auto end = std::chrono::steady_clock::now();
+
+    std::cout<< "Calculations took "<< std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();*/
+    Tester<int> test;
+    test.testSort(1);
+    test.testQuickSort(10000);
+    test.testMergeSort(10000);
+    test.testBubbleSort(100);
+    //std::cout<<"\n";
+
+    /*
     auto* kru1 = new Kangooroo (20,30,"Jopa");
     auto* kru2 = new Kangooroo (15,6,"Brat Jopbi");
     auto* cat1 = new Cat (43,10,"Kotleta");
@@ -63,7 +94,8 @@ int main() {
     SquirellInfo(&seq);
     QuickSort<Animal*> AnimalSorter;
     AnimalSorter.Sort(&seq,0,5, WeightCmp);
-    KangorooNames(&seq);
+    KangorooNames(&seq);*/
+
     return 0;
 
 }
