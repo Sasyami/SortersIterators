@@ -71,7 +71,7 @@ int main() {
 
     std::cout<< "Calculations took "<< std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();*/
     Tester<int> test;
-    test.testSort(1);
+    test.testSort(2);
     test.testQuickSort(10000);
     test.testMergeSort(10000);
     test.testBubbleSort(100);
