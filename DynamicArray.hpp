@@ -10,69 +10,140 @@ public:
     private:
         T* value;
     public:
+        int direction;
         int curIndex;
         size_t maxIndex;
     public:
-        ArrayIterator(T* start, size_t max_index,int cur_index = 0){
-            if (max_index<cur_index||cur_index<0){
+        ArrayIterator(T* start, size_t max_index,int cur_index = 0,int _direction = 1){
+            /*if (max_index<cur_index||cur_index<0){
                 value = nullptr;
             }else {
                 value = start;
-            }
+            }*/
+            value = start;
             curIndex = cur_index;
             maxIndex = max_index;
+            direction = _direction;
         }
         T& operator *(){
             return *value;
         }
-        ArrayIterator& operator ++ (){
-            value++;
-            curIndex++;
-            if (curIndex>maxIndex){
+        ArrayIterator operator ++ (int){
+            auto new_iterator = ArrayIterator(value,maxIndex,curIndex,direction);
+            value = value +direction;
+            curIndex = curIndex+direction;
+            /*if (curIndex<0||curIndex>maxIndex){
                 value = nullptr;
-            }
+            }*/
+            return new_iterator;
+        }
+        ArrayIterator operator -- (int){
+            auto new_iterator = ArrayIterator(value,maxIndex,curIndex,direction);
+            value = value -direction;
+            curIndex = curIndex-direction;
+            return new_iterator;
+        }
+        ArrayIterator& operator ++ (){
+            value = value + 1*direction;
+            curIndex = curIndex+1*direction;
+
             return *this;
+        }
+        ArrayIterator& operator -- (){
+            value = value - 1*direction;
+            curIndex= curIndex-1*direction;
+
+            return *this;
+        }
+        ArrayIterator& operator += (int number){
+            curIndex+=number*direction;
+
+            value = value + number*direction;
+
+
+        }
+        ArrayIterator& operator -= (int number){
+            curIndex-=number*direction;
+
+            value = value - number*direction;
+
+
+        }
+        ArrayIterator& operator = (const ArrayIterator& _iter){
+            value = _iter.value;
+            curIndex = _iter.curIndex;
+            maxIndex = _iter.maxIndex;
+            direction = _iter.direction;
+            return *this;
+        }
+        ArrayIterator operator + (int number){
+            auto* new_iterator = new ArrayIterator(value+number*direction,maxIndex,curIndex+number*direction,direction);
+            return *new_iterator;
+
+        }
+        ArrayIterator operator - (int number){
+            auto* new_iterator = new ArrayIterator(value-number*direction,maxIndex,curIndex-number*direction,direction);
+            return *new_iterator;
         }
         bool operator < (const ArrayIterator& iterator){
             if (value<iterator.value){
+                if (direction == -1){
+                    return false;
+                }
+                return true;
+            }
+            if (direction==-1){
                 return true;
             }
             return false;
         }
         bool operator > (const ArrayIterator& iterator){
             if (value>iterator.value){
+                if (direction==-1){
+                    return false;
+                }
+                return true;
+            }
+            if (direction==-1){
                 return true;
             }
             return false;
         }
         bool operator <= (const ArrayIterator& iterator){
-            if (value<=iterator.value){
-                return true;
+            if (value>iterator.value){
+                if (direction==-1){
+                    return true;
+                }
+                return false;
             }
-            return false;
+            if (direction==-1){
+                return false;
+            }
+            return true;
         }
         bool operator >= (const ArrayIterator& iterator){
             if (value<iterator.value){
+                if (direction==-1){
+                    return true;
+                }
+                return false;
+            }
+            if (direction==-1){
+                return false;
+            }
+            return true;
+        }
+        bool operator == (const ArrayIterator& iterator){
+            if (value==iterator.value){
                 return true;
             }
             return false;
         }
-        ArrayIterator& operator + (size_t number){
-            auto* new_iterator = new ArrayIterator(value,maxIndex,curIndex+number);
-            return *new_iterator;
-
-        }
-        ArrayIterator& operator -- (){
-            value--;
-            curIndex--;
-            if (curIndex<0||curIndex>maxIndex){
-                value = nullptr;
+        bool operator != (const ArrayIterator& iterator){
+            if (value!=iterator.value){
+                return true;
             }
-            return *this;
-        }
-        ArrayIterator& operator - (size_t number){
-            auto* new_iterator = new ArrayIterator(value,maxIndex,curIndex-number);
-            return *new_iterator;
+            return false;
         }
 
     };
@@ -132,6 +203,20 @@ public:
         }
     }
 public:
+    ArrayIterator beginDA(){
+        return ArrayIterator(array,length-1);
+    }
+    ArrayIterator endDA(){
+        return ArrayIterator(array+length,length-1,length);
+    }
+    ArrayIterator rbeginDA(){
+        return ArrayIterator(array+length-1,length-1,length-1,-1);
+    }
+    ArrayIterator rendDA(){
+        return ArrayIterator(array-1,length-1,-1,-1);
+    }
+
+
     T Get(size_t index) const{
 
 
@@ -166,6 +251,9 @@ public:
         this->array = new_array;
         this->length = newSize;
 
+    }
+    T& operator [] (int index){
+        return array[index];
     }
 
 

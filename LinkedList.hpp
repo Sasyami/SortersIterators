@@ -18,8 +18,8 @@ public:
     virtual void SetNext (LinkedListNode<T>* node) = 0;
     virtual void SetPrev (LinkedListNode<T>* node) = 0;
     virtual void SetValue (T value) = 0;
+    virtual T& GetValue() = 0;
 
-    virtual T GetValue() = 0;
 };
 template <class T>
 class LinkedList{
@@ -64,7 +64,7 @@ private:
         LinkedListNode<T>* GetPrev() override {
             return this->PrevNode;
         }
-        T GetValue() override {
+        T& GetValue() override {
             //std::cout << "I am LinkedListNodeInternal GetValue" << std::endl;
             return this->value;
         }
@@ -90,6 +90,88 @@ private:
     LinkedListNodeInternal* FirstNode;
     LinkedListNodeInternal* LastNode;
 public:
+    class iteratorL{
+    private:
+        LinkedListNode<T>* value;
+        LinkedListNode<T>* last_node;
+        bool is_reversed;
+    public:
+        //type = bidirectional
+        T& operator *(){
+
+            return value->GetValue();
+        }
+        explicit iteratorL(LinkedListNode<T>* _value, LinkedListNode<T>* _last_node = nullptr,bool _reverse = false){
+            value = _value;
+            last_node = _last_node;
+            is_reversed = _reverse;
+        }
+        iteratorL(const iteratorL& newIter){
+            value = newIter.value;
+            last_node = newIter.last_node;
+            is_reversed = newIter.is_reversed;
+        }
+        iteratorL& operator ++(){
+            if (is_reversed){
+                value = value->GetPrev();
+            }else {
+                value = value->GetNext();
+            }
+            return *this;
+        }
+        iteratorL operator ++(int){
+            auto* retIter = new iteratorL(value);
+
+            if (is_reversed){
+                value = value->GetPrev();
+            }else {
+                value = value->GetNext();
+            }
+            return *retIter;
+        }
+        iteratorL& operator --(){
+            if (value == nullptr){
+                value = last_node;
+                return *this;
+            }
+            if (is_reversed){
+                value = value->GetNext();
+            }else {
+                value = value->GetPrev();
+            }
+
+            return *this;
+        }
+        iteratorL operator --(int){
+            auto* retIter = new iteratorL(value);
+            if (is_reversed){
+                value = value->GetNext();
+            }else {
+                value = value->GetPrev();
+            }
+            return *retIter;
+        }
+        bool operator ==(const iteratorL& anotherIter){
+            return anotherIter.value == value;
+        }
+        bool operator !=(const iteratorL& anotherIter){
+            return anotherIter.value != value;
+        }
+
+    };
+    iteratorL begin(){
+        return iteratorL(FirstNode,LastNode);
+    }
+    iteratorL end(){
+        return iteratorL(nullptr,LastNode);
+    }
+    iteratorL rbegin(){
+        return iteratorL(LastNode,FirstNode,true);
+    }
+    iteratorL rend(){
+        return iteratorL(nullptr,FirstNode,true);
+
+    }
     ~LinkedList(){
         LinkedListNode<T>* current = FirstNode;
         LinkedListNode<T>* next;
@@ -105,7 +187,7 @@ public:
 public:
     LinkedList (){
 
-        auto* LLNI1 = new LinkedListNodeInternal;
+        /*auto* LLNI1 = new LinkedListNodeInternal;
         auto* LLNI2 = new LinkedListNodeInternal;
         LLNI1->SetValue((T)0);
         LLNI2->SetValue((T)0);
@@ -114,11 +196,14 @@ public:
         LLNI2->SetPrev(LLNI1);
         LLNI1->SetPrev(nullptr);
         this->FirstNode = LLNI1;
-        this->LastNode = LLNI2;
+        this->LastNode = LLNI2;*/
+        FirstNode = nullptr;
+        LastNode = nullptr;
 
     }
 public:
     LinkedList (T* items, int count){
+
         int i;
         if (items == NULL){
             throw IndexOutOfRange(WrongInput);
@@ -127,8 +212,11 @@ public:
         first->SetValue(items[0]);
         this->FirstNode = first;
         LinkedListNode<T>* prev = first;
+
         for (i = 1;i<count-1;i++){
-            if (!items[i]){
+            //std::cout<<count<<" - count\n";
+            //std::cout<<items[i]<<"\n";
+            if (!items[i]&&items[i]!=0){
                 throw IndexOutOfRange(WrongIndex);
             }
             auto node = new LinkedListNodeInternal;
@@ -192,9 +280,7 @@ public:
 public:
     T Get(size_t index){
         int i;
-        if (index<0){
-            throw IndexOutOfRange(WrongIndex);
-        }
+
         if ((this->FirstNode==nullptr)||(this->LastNode==nullptr)) {
             throw IndexOutOfRange(EmptyList);//new IndexOutOfRangeException();
         }
@@ -209,12 +295,27 @@ public:
         }
         return current->GetValue();
     }
+    LinkedListNode<T>* GetNode(size_t index){
+        int i;
+
+        if ((this->FirstNode==nullptr)||(this->LastNode==nullptr)) {
+            throw IndexOutOfRange(EmptyList);//new IndexOutOfRangeException();
+        }
+        LinkedListNode<T>* current = this->FirstNode;
+        for (i = 1;i<=index;i++){
+            if (current->GetNext()!=nullptr) {
+                current = current->GetNext();
+            }
+            else{
+                throw IndexOutOfRange(WrongIndex);
+            }
+        }
+        return current;
+    }
 public:
     LinkedList<T>* GetSubList(size_t startIndex, size_t endIndex){
         int i;
-        if ((startIndex<0)||(endIndex<0)){
-            throw IndexOutOfRange(WrongIndex);
-        }
+
         auto* new_list = new LinkedList;
         auto* first = new LinkedListNodeInternal;
         first->SetPrev(nullptr);
@@ -250,6 +351,14 @@ public:
         auto* node = new LinkedListNodeInternal;
         node->SetValue(item);
         node->SetNext(nullptr);
+        if (FirstNode==nullptr){
+            node->SetPrev(nullptr);
+            FirstNode = node;
+        }
+        if (LastNode == nullptr){
+            FirstNode->SetNext(node);
+            node->SetPrev(FirstNode);
+        }
         this->LastNode->SetNext(node);
         node->SetPrev(this->LastNode);
         this->LastNode = node;

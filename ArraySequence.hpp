@@ -66,6 +66,19 @@ public:
         delete array;
     };
 public:
+    typename DynamicArray<T>::ArrayIterator begin(){
+        return array->beginDA();
+    }
+    typename DynamicArray<T>::ArrayIterator end(){
+        return array->endDA();
+    }
+    typename DynamicArray<T>::ArrayIterator rend(){
+        return array->rendDA();
+    }
+    typename DynamicArray<T>::ArrayIterator rbegin(){
+        return array->rbeginDA();
+    }
+
     T GetFirst() const override{
         if ((this->array == nullptr) || (size == 0)){
             throw IndexOutOfRange(EmptyList);
@@ -210,6 +223,9 @@ public:
         }
 
         array->Set(index,item);
+    }
+    T& operator [] (int index){
+        return array->operator[](index);
     }
 };
 #endif //MAIN_CPP_ARRAYSEQUENCE_HPP

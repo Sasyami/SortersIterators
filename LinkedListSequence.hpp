@@ -17,11 +17,18 @@ private:
 
 public:
     LinkedListSequence (T* items, int count){
+
         list = new LinkedList<T>(items,count);
     }
 public:
     LinkedListSequence (){
         list = new LinkedList<T>();
+    }
+    LinkedListSequence(Sequence<T>* _seq){
+        list = new LinkedList<T>();
+        for (auto i = 0;i<_seq->GetLength();i++){
+            list->Append(_seq->Get(i));
+        }
     }
 public:
     explicit LinkedListSequence (const LinkedList <T> & outer_list){
@@ -37,6 +44,12 @@ public:
         list = new LinkedList<T>(outer_list);
         return *this;
     }
+    typename LinkedList<T>::iteratorL beginLS(){
+        return list->beginL();
+    }
+    typename LinkedList<T>::iteratorL endLS(){
+        return list->endL();
+    }
 public:
     T GetFirst() const override{
         return list->GetFirst();
@@ -48,6 +61,9 @@ public:
 public:
     T Get(size_t i) const override{
         return list->Get(i);
+    }
+    LinkedListNode<T>* GetNode(size_t i){
+        return list->GetNode(i);
     }
 public:
     Sequence<T>* GetSubsequence(size_t startIndex, size_t endIndex) override{
@@ -90,5 +106,18 @@ public:
 
     }
     friend QuickListSorter<T>;
+    typename LinkedList<T>::iteratorL begin(){
+        return list->begin();
+    }
+    typename LinkedList<T>::iteratorL end(){
+        return list->end();
+    }
+    typename LinkedList<T>::iteratorL rend(){
+        return list->rend();
+    }
+    typename LinkedList<T>::iteratorL rbegin(){
+        return list->rbegin();
+    }
+
 };
 #endif //LAB2PRJ_LINKEDLISTSEQUENCE_HPP

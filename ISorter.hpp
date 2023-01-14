@@ -136,6 +136,45 @@ private:
         qsort(List, last, new_last,cmp);
 
     }
+    void msort(ArraySequence<T>* seq,size_t start,size_t end, int cmp(T,T)){//не просто компарить а сортировать
+        if (start==end){
+            return;
+        }
+        Sort(seq,(start+end)/2+1,end,cmp);
+        Sort(seq,start,(start+end)/2,cmp);
+
+        size_t first_half = start;
+        size_t last_half = (start+end)/2+1;
+        T* buffer = new T[end-start+1];
+        for (size_t i = 0;i<end-start+1;i++){
+            if (first_half>(start+end)/2){
+                buffer[i] = seq->Get(last_half);
+                last_half++;
+                continue;
+            }
+            if (last_half>end){
+                buffer[i] = seq->Get(first_half);
+                first_half++;
+                continue;
+            }
+            if (cmp(seq->Get(first_half),seq->Get(last_half))<0){
+                buffer[i] = seq->Get(first_half);
+                first_half++;
+            }else{
+                buffer[i] = seq->Get(last_half);
+                last_half++;
+            }
+        }
+        for (size_t i = start;i<end+1;i++){
+            seq->Set(buffer[i-start],i);
+        }
+        delete[] buffer;
+
+
+    }
+    void msort(LinkedListSequence<T>* list, LinkedListNode<T>* first,LinkedListNode<T>* last,int cmp(T,T)){
+
+    }
 public:
     void qsort(ArraySequence<T>* seq, int cmp(T,T)){
         qsort(seq,0,seq->GetLength()-1,cmp);
@@ -145,6 +184,9 @@ public:
         //std::cout<<List->list->FirstNode->GetNext()->GetValue()<<" - first that we need, "<<List->list->LastNode->GetValue()<<" last"<<std::endl;
         qsort(List,List->list->FirstNode->GetNext(),List->list->LastNode,cmp);
         List->Delete(0);
+    }
+    void msort(ArraySequence<T>* seq, int cmp(T,T)){
+        msort(seq,0,seq->GetLength()-1,cmp);
     }
 };
 #endif //MAIN_CPP_ISORTER_HPP
